@@ -13,15 +13,52 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function login(Request $request){
-        $this->validate($request, [
-            'email' => 'email|string|required',
-            'password' => 'string|required'
+    public function login(Request $request){ 
+
+        if (!$request->isMethod('post')) {
+            return response()->json([
+            'message' => 'Invalid request method. Only POST method is allowed.',
+            ], 405);
+        } 
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'password' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        } 
 
         $credentials = $request->only([
             'email', 'password' 
+        ]); 
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            $token = $user->createToken('api-token')->plainTextToken;
+            return response()->json([
+            'token' => $token,
+            'user' => $user,
+            ], 200);
+        } else {
+            return response()->json([
+            'message' => 'These credentials do not match our records.',
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'password' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        } 
+
+        $credentials = $request->only([
+            'email', 'password' 
+        ]); 
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
@@ -33,14 +70,13 @@ class UserController extends Controller
         } else {
             return response()->json([
                 'message' => 'User does not exist',
-            ], 404);
+            ], 422);
         }
     }
 
-    // Logout function (already provided)
     public function logout(Request $request){
         try {
-            $tokenValue = $request->input('tokenValue');
+            $tokenValue = $request->input('token');
             $accessToken = PersonalAccessToken::findToken($tokenValue);
 
             if ($accessToken) {
@@ -58,7 +94,6 @@ class UserController extends Controller
         }
     }
 
-    // Create function for creating a new user
     public function register(Request $request) {
         // Validate the incoming request
         $validator = Validator::make($request->all(), [
@@ -80,6 +115,6 @@ class UserController extends Controller
         $user->save();
 
         // Return JSON response indicating successful registration
-        return response()->json(['message' => 'User registered successfully'], 201); 
+        return response()->json(['message' => 'Account created successfully.'], 200); 
     } 
 }
