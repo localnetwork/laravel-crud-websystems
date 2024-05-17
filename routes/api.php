@@ -30,4 +30,4 @@ Route::post('/login',[UserController::class,'login']);
 
 Route::post('/register', [UserController::class, 'register']);
 
-Route::middleware('auth:sanctum')->post('/logout',[UserController::class,'logout']);
+Route::post('/logout',[UserController::class,'logout']);

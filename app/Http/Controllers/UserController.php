@@ -43,7 +43,9 @@ class UserController extends Controller
             ], 200);
         } else {
             return response()->json([
-            'message' => 'These credentials do not match our records.',
+            "errors" => [
+                'message' => 'These credentials do not match our records.',
+            ]
             ], 422);
         }
 
@@ -76,9 +78,9 @@ class UserController extends Controller
 
     public function logout(Request $request){
         try {
-            $tokenValue = $request->input('token');
+            $tokenValue = $request->bearerToken();
             $accessToken = PersonalAccessToken::findToken($tokenValue);
-
+    
             if ($accessToken) {
                 $accessToken->delete();
                 return response()->json([
@@ -91,7 +93,7 @@ class UserController extends Controller
             }
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
-        }
+        } 
     }
 
     public function register(Request $request) {
@@ -115,6 +117,6 @@ class UserController extends Controller
         $user->save();
 
         // Return JSON response indicating successful registration
-        return response()->json(['message' => 'Account created successfully.'], 200); 
+    return response()->json(['message' => 'Account created successfully.'], 200); 
     } 
 }
