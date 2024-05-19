@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\v1\StudentsController;
+use App\Http\Controllers\api\v1\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['prefix'=>'v1','namespace'=>'App\Http\Controllers\api\v1','middleware'=>['auth:sanctum']],function(){
     Route::apiResource('students',StudentsController::class);
+});
+
+Route::group(['prefix'=>'v1','namespace'=>'App\Http\Controllers\api\v1'],function(){
+    Route::apiResource('posts', PostController::class);
 });
 
 Route::post('/login',[UserController::class,'login']);

@@ -2,37 +2,38 @@
 
 namespace App\Http\Controllers\api\v1;
 
-use App\Models\Students;
-use App\Http\Requests\v1\StoreStudentsRequest;
-use App\Http\Requests\v1\UpdateStudentsRequest;
+use Illuminate\Http\Request;
+use App\Models\Post;
+use App\Http\Requests\v1\StorePostRequest;
+use App\Http\Requests\v1\UpdatePostRequest;
 
 use App\Http\Controllers\Controller;
 
-class StudentsController extends Controller
+class PostController extends Controller
 {
     public function index()
     {
-        return Students::paginate(10);
+        return Post::paginate(10);
     }
 
-    // public function store(StoreStudentsRequest $request)
+    // public function store(StorePostRequest $request)
     // {
     //     $data = $request->all();
         
-    //     Students::create($data);
+    //     Post::create($data);
 
     //     return [
     //         'message'=>'Student Enrolled successfully'
     //     ];
     // }
 
-    // public function show(Students $students,$id)
+    // public function show(Post $post,$id)
     // {
-    //     return Students::find($id);
+    //     return Post::find($id);
     // }
-    // public function update(UpdateStudentsRequest $request, Students $students,$id)
+    // public function update(UpdatePostRequest $request, Post $post,$id)
     // {
-    //     $student = Students::find($id);
+    //     $student = Post::find($id);
     //     if($student){
 
     //         $student->update($request->all());
@@ -42,9 +43,9 @@ class StudentsController extends Controller
     //     }
     // }
 
-    // public function destroy(Students $students,$id)
+    // public function destroy(Post $post,$id)
     // {
-    //     $student = Students::find($id);
+    //     $student = Post::find($id);
 
     //     if($student){
 
@@ -58,5 +59,5 @@ class StudentsController extends Controller
     //             'message'=>'Student not found'
     //         ];
     //     }
-    // }
+    // } 
 }

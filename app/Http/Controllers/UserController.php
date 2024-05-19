@@ -100,7 +100,15 @@ class UserController extends Controller
         // Validate the incoming request
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:users',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'
+            ],
+            'avatar' => 'required',
+            'avatar_color' => 'required',
             'password' => 'required|string|min:8|confirmed',
         ]);
 

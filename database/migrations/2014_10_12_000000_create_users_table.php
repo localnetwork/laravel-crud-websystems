@@ -13,10 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        $avatars = ['cat', 'bear', 'pig', 'cow', 'dog', 'goat', 'koala', 'rabbit', 'owl'];
+        $defaultAvatar = $avatars[array_rand($avatars)]; // Select a random avatar
+        
+        Schema::create('users', function (Blueprint $table) use ($defaultAvatar) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('avatar')->default($defaultAvatar);
+            $table->string('avatar_color')->default('blue');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
@@ -32,5 +37,5 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('users');
-    }
+    } 
 };
