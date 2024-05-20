@@ -6,26 +6,60 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Http\Requests\v1\StorePostRequest;
 use App\Http\Requests\v1\UpdatePostRequest;
+use Illuminate\Support\Facades\Validator;
 
 use App\Http\Controllers\Controller;
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        return Post::paginate(10);
-    }
+    public function index(Request $request)
+{
+    // Default values for pagination and order
+    $perPage = $request->query('per_page', 10);
+    $orderBy = $request->query('order_by', 'id');
+    $orderDirection = $request->query('order_direction', 'desc');
 
-    // public function store(StorePostRequest $request)
-    // {
-    //     $data = $request->all();
+    // Get posts with user relationship, dynamically order them, and paginate
+    return Post::with('user')
+        ->orderBy($orderBy, $orderDirection)
+        ->paginate($perPage);
+} 
+
+ 
+    public function store(Request $request) {
+        // Retrieve all the request data
+        $data = $request->all();
         
-    //     Post::create($data);
+        // Get the authenticated user
+        $user = auth()->user();
 
-    //     return [
-    //         'message'=>'Student Enrolled successfully'
-    //     ];
-    // }
+        // Ensure user is authenticated using Sanctum
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        // Add the user_id to the data array
+        $data['user_id'] = $user->id;
+
+        $validator = Validator::make($data, [
+            'title' => 'required',
+            'content' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }  
+        $post = new Post(); 
+
+        $post->title = $data['title'];
+        $post->content = $data['content'];
+        $post->user_id = $data['user_id']; 
+        $post->save();  
+        return response()->json([
+            'message' => 'Post added successfully.',
+            'data' => $post 
+        ], 200);  
+    }     
 
     // public function show(Post $post,$id)
     // {

@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    public function index(Request $request) {
+        return User::orderBy($request->query('sort', 'id'), $request->query('order', 'asc'))
+                    ->paginate($request->query('limit', 30));
+    }
     public function login(Request $request){ 
 
         if (!$request->isMethod('post')) {
@@ -125,6 +129,20 @@ class UserController extends Controller
         $user->save();
 
         // Return JSON response indicating successful registration
-    return response()->json(['message' => 'Account created successfully.'], 200); 
+        return response()->json(['message' => 'Account created successfully.'], 200); 
     } 
+
+    public function show($id) {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'user' => $user,
+        ], 200);
+    }
 }

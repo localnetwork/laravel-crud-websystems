@@ -26,9 +26,12 @@ Route::group(['prefix'=>'v1','namespace'=>'App\Http\Controllers\api\v1','middlew
     Route::apiResource('students',StudentsController::class);
 });
 
-Route::group(['prefix'=>'v1','namespace'=>'App\Http\Controllers\api\v1'],function(){
+Route::group(['prefix'=>'v1','namespace'=>'App\Http\Controllers\api\v1', 'middleware'=>['auth:sanctum']],function(){
     Route::apiResource('posts', PostController::class);
 });
+
+Route::get('/users',[UserController::class,'index']);
+Route::get('/users/{id}',[UserController::class,'show']);
 
 Route::post('/login',[UserController::class,'login']);
 // Route::post('/register',[UserController::class,'register']);

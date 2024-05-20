@@ -13,19 +13,22 @@ return new class extends Migration
      */
     public function up()
     {
-        $avatars = ['cat', 'bear', 'pig', 'cow', 'dog', 'goat', 'koala', 'rabbit', 'owl'];
-        $defaultAvatar = $avatars[array_rand($avatars)]; // Select a random avatar
         
-        Schema::create('users', function (Blueprint $table) use ($defaultAvatar) {
+        
+        Schema::create('users', function (Blueprint $table)  {
             $table->id();
             $table->string('name');
+            $table->unsignedBigInteger('role_id')->default(2);
             $table->string('email')->unique();
-            $table->string('avatar')->default($defaultAvatar);
+            $table->string('avatar')->default('cow');
             $table->string('avatar_color')->default('blue');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->rememberToken(); 
             $table->timestamps();
+            
+
+            $table->foreign('role_id')->references('id')->on('roles');
         });
     }
 

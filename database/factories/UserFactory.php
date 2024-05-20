@@ -17,12 +17,14 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+        $avatars = ['cat', 'bear', 'pig', 'cow', 'dog', 'goat', 'koala', 'rabbit', 'owl'];
+        $avatarColors = ['red', 'yellow', 'blue', 'green', 'violet', 'pink', 'orange', 'skyblue'];
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'avatar' => 'cow',
-            'avatar_color' => 'blue',
+            'avatar' => $this->faker->randomElement($avatars), 
+            'avatar_color' => $this->faker->randomElement($avatarColors),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
         ];
