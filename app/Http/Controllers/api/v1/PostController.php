@@ -111,17 +111,20 @@ class PostController extends Controller
     {
         $post = Post::find($id);
 
+        $user = auth()->user();
+
+        // Check if the user is authorized to update the post
+        if ($post->user_id !== $user->id) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        } 
+
         if($post){
 
             $post->delete();
             
-            return [
-                'message'=>'Post Deleted successfully'
-            ];
+            return response()->json(['message' => 'Post deleted successfully.'], 200);
         }else{
-            return [
-                'message'=>'Post not found'
-            ];
+            return response()->json(['message' => 'Post not found.'], 422);
         }
     } 
 }

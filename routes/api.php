@@ -30,6 +30,7 @@ Route::group(['prefix'=>'v1','namespace'=>'App\Http\Controllers\api\v1','middlew
 Route::group(['prefix'=>'v1','namespace'=>'App\Http\Controllers\api\v1', 'middleware'=>['auth:sanctum']],function(){
     Route::get('/posts/{id}', [PostController::class, 'show']);
     Route::put('/posts/{id}', [PostController::class, 'update']); 
+    Route::delete('/posts/{id}', [PostController::class, 'destroy']);
     Route::apiResource('posts', PostController::class);
 });
 
