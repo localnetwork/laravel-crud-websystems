@@ -132,8 +132,9 @@ class UserController extends Controller
         return response()->json(['message' => 'Account created successfully.'], 200); 
     } 
 
+    
     public function show($id) {
-        $user = User::find($id);
+        $user = User::find($id); 
 
         if (!$user) {
             return response()->json([
@@ -141,8 +142,51 @@ class UserController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'user' => $user,
-        ], 200);
+        return response()->json($user, 200);
     }
+
+    
+
+    public function update(Request $request) {
+        // Find the user by ID
+        $user = $request->user(); 
+    
+        // Check if the user exists
+        if (!$user) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+    
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'avatar' => 'required',
+            'avatar_color' => 'required',
+        ]);
+    
+        // If validation fails, return JSON response with validation errors
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+    
+        // Update the user data
+        $user->name = $request->name;
+        $user->avatar = $request->avatar;
+        $user->avatar_color = $request->avatar_color; 
+    
+        // Check if a new password is provided
+        if ($request->has('password')) {
+            $user->password = Hash::make($request->password);
+        }
+    
+        // Save the updated user
+        $user->save();
+    
+        // Return JSON response indicating successful update
+        return response()->json([
+            'message' => 'User updated successfully.',
+            'user' => $user
+        ], 200);
+    } 
 }

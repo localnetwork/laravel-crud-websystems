@@ -41,57 +41,87 @@ class PostController extends Controller
         // Add the user_id to the data array
         $data['user_id'] = $user->id;
 
+        // Validate the request data
         $validator = Validator::make($data, [
             'title' => 'required',
             'content' => 'required',
         ]);
 
+        // Check if validation fails
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
-        }  
-        $post = new Post(); 
+        }
 
+        // Create a new Post instance and save the data
+        $post = new Post();
         $post->title = $data['title'];
         $post->content = $data['content'];
-        $post->user_id = $data['user_id']; 
-        $post->save();  
+        $post->user_id = $data['user_id'];
+        $post->save();
+
+        // Load the user relationship
+        $post->load('user');
+
+        // Return the response with the post and user info
         return response()->json([
             'message' => 'Post added successfully.',
             'data' => $post 
-        ], 200);  
-    }     
+        ], 200);
+    }  
 
-    // public function show(Post $post,$id)
-    // {
-    //     return Post::find($id);
-    // }
-    // public function update(UpdatePostRequest $request, Post $post,$id)
-    // {
-    //     $student = Post::find($id);
-    //     if($student){
+    public function show(Post $post, $id)
+    {
+        $post = Post::with('user')->find($id);
+        if ($post) {
+            return response()->json(['data' => $post], 200);
+        } else {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
+    }
 
-    //         $student->update($request->all());
-    //         return response()->json(['message' => 'Success'],200);
-    //     }else{
-    //         return response()->json(['message' => 'Student not found'],400);
-    //     }
-    // }
+    public function update(Request $request, Post $post, $id)
+{
+    // Retrieve the post by its ID
+    $post = Post::find($id);
 
-    // public function destroy(Post $post,$id)
-    // {
-    //     $student = Post::find($id);
+    // Check if the post exists
+    if(!$post){
+        return response()->json(['message' => 'Post not found'], 400);
+    }
+ 
+    // Get the currently authenticated user
+    $user = auth()->user();
 
-    //     if($student){
+    // Check if the user is authorized to update the post
+    if ($post->user_id !== $user->id) {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
 
-    //         $student->delete();
+    // Update the post with the request data
+    $post->update($request->all()); 
+
+    // Return a success response
+    return response()->json([
+        'message' => 'Post has been updated.', 
+        "data" => $post
+    ], 200);
+} 
+
+    public function destroy(Post $post,$id)
+    {
+        $post = Post::find($id);
+
+        if($post){
+
+            $post->delete();
             
-    //         return [
-    //             'message'=>'Student Deleted successfully'
-    //         ];
-    //     }else{
-    //         return [
-    //             'message'=>'Student not found'
-    //         ];
-    //     }
-    // } 
+            return [
+                'message'=>'Post Deleted successfully'
+            ];
+        }else{
+            return [
+                'message'=>'Post not found'
+            ];
+        }
+    } 
 }

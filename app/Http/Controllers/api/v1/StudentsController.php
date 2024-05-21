@@ -30,17 +30,17 @@ class StudentsController extends Controller
     // {
     //     return Students::find($id);
     // }
-    // public function update(UpdateStudentsRequest $request, Students $students,$id)
-    // {
-    //     $student = Students::find($id);
-    //     if($student){
+    public function update(UpdateStudentsRequest $request, Students $students,$id)
+    {
+        $student = Students::find($id);
+        if($student){
 
-    //         $student->update($request->all());
-    //         return response()->json(['message' => 'Success'],200);
-    //     }else{
-    //         return response()->json(['message' => 'Student not found'],400);
-    //     }
-    // }
+            $student->update($request->all());
+            return response()->json(['message' => 'Success'],200);
+        }else{
+            return response()->json(['message' => 'Student not found'],400);
+        }
+    }
 
     // public function destroy(Students $students,$id)
     // {

@@ -18,7 +18,7 @@ class PostFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence,
-            'content' => $this->faker->paragraphs(3, true),
+            'content' => $this->faker->paragraphs(2, true),
             'user_id' => $this->faker->numberBetween(1, 100),
             "created_at" => now(),
             "updated_at" => now()
